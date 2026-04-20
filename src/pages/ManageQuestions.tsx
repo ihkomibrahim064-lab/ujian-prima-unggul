@@ -1,3 +1,5 @@
+"use client";
+
 import React, { useEffect, useState } from 'react';
 import { supabase, type Question } from '../lib/supabase';
 import { useAuth } from '../lib/AuthContext';
@@ -23,6 +25,7 @@ export default function ManageQuestions() {
   const [searchTerm, setSearchTerm] = useState('');
   const [isModalOpen, setModalOpen] = useState(false);
   const [editingQuestion, setEditingQuestion] = useState<Partial<Question> | null>(null);
+  const [submitting, setSubmitting] = useState(false);
 
   useEffect(() => {
     fetchQuestions();
@@ -47,10 +50,16 @@ export default function ManageQuestions() {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!user || !editingQuestion) return;
+    setSubmitting(true);
 
     try {
       const payload = {
-        ...editingQuestion,
+        question: editingQuestion.question,
+        option_a: editingQuestion.option_a,
+        option_b: editingQuestion.option_b,
+        option_c: editingQuestion.option_c,
+        option_d: editingQuestion.option_d,
+        correct_answer: editingQuestion.correct_answer,
         created_by: user.id,
       };
 
@@ -70,9 +79,11 @@ export default function ManageQuestions() {
       setModalOpen(false);
       setEditingQuestion(null);
       fetchQuestions();
-    } catch (err) {
+    } catch (err: any) {
       console.error('Error saving question:', err);
-      alert('Gagal menyimpan soal.');
+      alert(`Gagal menyimpan soal: ${err.message}`);
+    } finally {
+      setSubmitting(false);
     }
   };
 
@@ -309,8 +320,15 @@ export default function ManageQuestions() {
                    <button type="button" onClick={() => setModalOpen(false)} className="btn-outline flex-1">
                      Batal
                    </button>
-                   <button type="submit" className="btn-primary flex-1">
-                     Simpan Soal
+                   <button type="submit" disabled={submitting} className="btn-primary flex-1 disabled:opacity-50 disabled:cursor-not-allowed">
+                     {submitting ? (
+                       <>
+                         <Loader2 className="animate-spin" size={18} />
+                         Menyimpan...
+                       </>
+                     ) : (
+                       'Simpan Soal'
+                     )}
                    </button>
                 </div>
               </form>

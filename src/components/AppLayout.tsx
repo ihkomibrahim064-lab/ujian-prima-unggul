@@ -56,7 +56,7 @@ export default function AppLayout() {
     { 
       label: 'Bank Soal', 
       icon: FileText, 
-      path: '/app/guru/questions', 
+      path: '/app/questions', 
       roles: ['admin', 'guru'] 
     },
     { 

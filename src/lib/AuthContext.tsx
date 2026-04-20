@@ -48,21 +48,41 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
 
   const fetchProfile = async (userId: string) => {
     try {
+      setLoading(true);
       const { data, error } = await supabase
         .from('users')
         .select('*')
         .eq('id', userId)
         .single();
 
-      if (error) {
-        // If profile doesn't exist and this is the first user, they might be admin
-        console.error('Error fetching profile:', error);
-        setProfile(null);
+      if (error && error.code === 'PGRST116') {
+        // Profile not found - Let's check if there are ANY users
+        const { count } = await supabase
+          .from('users')
+          .select('*', { count: 'exact', head: true });
+
+        // If no users exist, this is the first one, make them admin
+        const initialRole = (count === 0) ? 'admin' : 'siswa';
+        
+        const { data: userData } = await supabase.auth.getUser();
+        const userName = userData.user?.user_metadata?.name || userData.user?.email?.split('@')[0] || 'User';
+
+        const { data: newProfile, error: insertError } = await supabase
+          .from('users')
+          .insert([{ id: userId, name: userName, role: initialRole }])
+          .select()
+          .single();
+
+        if (insertError) throw insertError;
+        setProfile(newProfile);
+      } else if (error) {
+        throw error;
       } else {
         setProfile(data);
       }
     } catch (err) {
-      console.error('Unexpected error fetching profile:', err);
+      console.error('Auth Error:', err);
+      setProfile(null);
     } finally {
       setLoading(false);
     }

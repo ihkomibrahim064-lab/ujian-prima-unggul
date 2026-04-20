@@ -6,7 +6,13 @@ import { motion } from 'motion/react';
 export default function Dashboard() {
   const { profile } = useAuth();
   
-  const stats = [
+  const isStaff = profile?.role === 'admin' || profile?.role === 'guru';
+  
+  const stats = isStaff ? [
+    { label: 'Total Soal', value: '248', icon: FileText, color: 'text-brand' },
+    { label: 'Ujian Aktif', value: '08', icon: ClipboardCheck, color: 'text-brand' },
+    { label: 'Total Siswa', value: '342', icon: Users, color: 'text-brand' },
+  ] : [
     { label: 'Ujian Tersedia', value: '04', icon: Users, color: 'text-slate-800' },
     { label: 'Ujian Selesai', value: '12', icon: GraduationCap, color: 'text-slate-800' },
     { label: 'Rata-rata Nilai', value: '88.5', icon: TrendingUp, color: 'text-slate-800' },

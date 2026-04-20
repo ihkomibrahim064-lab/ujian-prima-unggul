@@ -39,7 +39,7 @@ const router = createBrowserRouter([
         element: <ManageUsers />,
       },
       {
-        path: 'guru/questions',
+        path: 'questions',
         element: <ManageQuestions />,
       },
       {

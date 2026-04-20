@@ -100,6 +100,20 @@ CREATE POLICY "Siswa can read their own results" ON public.results FOR SELECT US
 DROP POLICY IF EXISTS "Guru can read all results" ON public.results;
 CREATE POLICY "Guru can read all results" ON public.results FOR SELECT USING (EXISTS (SELECT 1 FROM public.users WHERE id = auth.uid() AND role IN ('admin', 'guru')));
 
+-- Exam Questions table policies
+DROP POLICY IF EXISTS "Authenticated users can read exam questions" ON public.exam_questions;
+CREATE POLICY "Authenticated users can read exam questions" ON public.exam_questions FOR SELECT USING (auth.role() = 'authenticated');
+
+DROP POLICY IF EXISTS "Guru can manage exam questions" ON public.exam_questions;
+CREATE POLICY "Guru can manage exam questions" ON public.exam_questions FOR ALL USING (EXISTS (SELECT 1 FROM public.users WHERE id = auth.uid() AND role IN ('admin', 'guru')));
+
+-- Answers table policies (Siswa submits, Guru/Admin reads)
+DROP POLICY IF EXISTS "Siswa can submit their answers" ON public.answers;
+CREATE POLICY "Siswa can submit their answers" ON public.answers FOR INSERT WITH CHECK (auth.uid() = user_id);
+
+DROP POLICY IF EXISTS "Guru can read all answers" ON public.answers;
+CREATE POLICY "Guru can read all answers" ON public.answers FOR SELECT USING (EXISTS (SELECT 1 FROM public.users WHERE id = auth.uid() AND role IN ('admin', 'guru')));
+
 -- 8. TRIGGER FOR AUTH SYNC
 -- Automatically create a profile when a user signs up
 CREATE OR REPLACE FUNCTION public.handle_new_user()
