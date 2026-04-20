@@ -1,0 +1,48 @@
+@import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:ital,wght@0,200..800;1,200..800&display=swap');
+@import "tailwindcss";
+
+@theme {
+  --font-sans: "Plus Jakarta Sans", ui-sans-serif, system-ui, sans-serif;
+  --color-brand: #EF4444; /* red-500 */
+  --color-brand-dark: #DC2626; /* red-600 */
+  --color-brand-light: #FEF2F2; /* red-50 */
+  --color-slate-50: #F8FAFC;
+  --color-slate-100: #F1F5F9;
+  --color-slate-200: #E2E8F0;
+  --color-slate-400: #94A3B8;
+  --color-slate-500: #64748B;
+  --color-slate-800: #1E293B;
+  --color-slate-900: #0F172A;
+}
+
+@layer base {
+  body {
+    @apply font-sans bg-slate-50 text-slate-800 antialiased;
+  }
+}
+
+@layer components {
+  .btn-primary {
+    @apply px-4 py-2 bg-brand text-white rounded-md hover:bg-brand-dark transition-all font-semibold text-sm flex items-center justify-center gap-2 cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed;
+  }
+  
+  .btn-outline {
+    @apply px-4 py-2 border-2 border-brand bg-transparent text-brand rounded-md hover:bg-brand-light transition-all font-semibold text-sm flex items-center justify-center gap-2 cursor-pointer;
+  }
+
+  .card {
+    @apply bg-white rounded-xl border border-slate-200 shadow-none overflow-hidden;
+  }
+
+  .input-field {
+    @apply w-full px-4 py-2 bg-white border border-slate-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-brand/10 focus:border-brand transition-all text-sm;
+  }
+
+  .status-pill {
+    @apply px-2.5 py-1 rounded-full text-[11px] font-bold uppercase tracking-tight;
+  }
+
+  .status-pill-success {
+    @apply bg-green-100 text-green-700;
+  }
+}
